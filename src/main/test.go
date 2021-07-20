@@ -140,5 +140,5 @@ func tryChan(n int) int {
 }
 
 func main() {
-	spentFucTime(tryChan)(2)
+	spentFucTime(tryChan)(3)
 }
