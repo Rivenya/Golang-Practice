@@ -139,6 +139,67 @@ func tryChan(n int) int {
 	return n
 }
 
+//关闭chan的实例
+func isCancel(n chan struct{}) bool {
+	select {
+	case <-n:
+		return true
+	default:
+		return false
+	}
+}
+func closeChan(n chan struct{}) {
+	n <- struct{}{}
+}
+func tryCloseChan() {
+	var mut sync.WaitGroup
+	// 开启通道
+	var ret = make(chan struct{}, 1)
+	// 开始循环创建线程
+	func() {
+		mut.Add(1)
+		for i := 0; i < 5; i++ {
+			go func(n chan struct{}, i int) {
+				for {
+					if isCancel(n) {
+						break
+					}
+					time.Sleep(time.Second * 2)
+				}
+				fmt.Println(i, "已经被结束了")
+				mut.Done()
+			}(ret, i)
+		}
+		closeChan(ret)
+		mut.Wait()
+	}()
+
+}
+
+//执行一次异步任务
+func tryOnlyAsyncTask() {
+	var once sync.Once
+	for i := 0; i < 50; i++ {
+		go func(num int) {
+			once.Do(func() {
+				fmt.Println("我是", num)
+			})
+		}(i)
+	}
+}
+
+// 第一个异步执行成功就返回
+func firstExeSusRetern() int {
+	var ch = make(chan int, 1)
+	for i := 0; i < 50; i++ {
+		go func(num int) {
+			time.Sleep(time.Second * 1)
+			ch <- num
+		}(i)
+	}
+	return <-ch
+}
+
 func main() {
-	spentFucTime(tryChan)(3)
+	fmt.Println(firstExeSusRetern())
 }
