@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 )
@@ -91,7 +92,7 @@ func (e *Animals) Hungry() {
 	fmt.Println(e.Name, "饿了要吃", e.Food)
 }
 func tryTypeAndInterface() {
-	tiger := Animals{Name: "老虎", Food: "肉"}
+	tiger := &Animals{Name: "老虎", Food: "肉"}
 	tiger.Hungry()
 }
 
@@ -101,7 +102,10 @@ func deferFunc() {
 		fmt.Println("我是延迟函数")
 	}()
 	fmt.Println("我在延迟函数后面")
-	panic("err")
+	// panic("err")
+	time.Sleep(time.Second * 1)
+	fmt.Println("睡了1秒")
+
 }
 
 //多线程
@@ -200,6 +204,15 @@ func firstExeSusRetern() int {
 	return <-ch
 }
 
+//reflect实验
+func tryReflect(n interface{}) {
+	c := reflect.TypeOf(n)
+	// println(c.Kind())
+	println(c)
+}
+
 func main() {
-	fmt.Println(firstExeSusRetern())
+	a := 1
+	b := &a
+	print(*b)
 }
